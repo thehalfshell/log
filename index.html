@@ -79,7 +79,7 @@ html, body {
   background: var(--hs-cream); border-radius: 18px; padding: 22px 24px;
   margin-bottom: 18px; position: relative;
 }
-.hs-card h3 { font-size: 28px; font-weight: 400; margin: 0; color: var(--hs-maroon); }
+.hs-card h3 { font-size: 28px; font-weight: 400; margin: 0; line-height: 1.1; color: var(--hs-maroon); }
 .hs-card .hs-loc { font-size: 16px; color: rgba(63,25,34,0.75); margin: 0 0 22px; }
 .hs-pearl-row { display: flex; gap: 8px; margin-bottom: 28px; }
 .hs-pearl-row span {
@@ -528,7 +528,7 @@ html, body {
     } else if (state.sort === 'rating') {
       sorted.sort(function(a, b) { return b.rating - a.rating; });
     } else if (state.sort === 'location') {
-      sorted.sort(function(a, b) { return (a.origin || '').localeCompare(b.origin || ''); });
+      sorted.sort(function(a, b) { return (a.region || '').localeCompare(b.region || ''); });
     } else if (state.sort === 'starred') {
       sorted.sort(function(a, b) { return (b.starred ? 1 : 0) - (a.starred ? 1 : 0); });
     } else {
