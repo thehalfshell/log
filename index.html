@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 html, body {
-  background: #1f1f1e;
+  background: #90ADBF;
   margin: 0;
   padding: 0;
 }
@@ -27,10 +27,15 @@ html, body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(180deg, var(--hs-blue), var(--hs-cream));
   color: var(--hs-maroon);
   position: relative;
   box-sizing: border-box;
+}
+#hs-bg-fixed {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, #90ADBF, #EEE0D1);
+  z-index: 0;
 }
 #hs-root .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -50,6 +55,8 @@ html, body {
   border-bottom: 1px solid rgba(63,25,34,0.25);
   max-width: 600px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 #hs-header h1 { font-size: 36px; font-weight: 400; margin: 0; color: var(--hs-maroon); }
 .hs-section-label {
@@ -153,8 +160,11 @@ html, body {
 #hs-gate-error {
   font-size: 13px; color: var(--hs-coral); margin-top: 10px; display: none;
 }
+#hs-app-content { position: relative; z-index: 1; }
 #hs-app-content.hs-locked { display: none; }
 </style>
+
+<div id="hs-bg-fixed"></div>
 
 <h2 class="sr-only">The Half Shell, an oyster tasting log with a home screen for adding oysters and viewing top-rated ones, and a list screen showing all entries sortable by name, rating, or location.</h2>
 
