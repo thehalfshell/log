@@ -106,7 +106,7 @@ html, body {
   font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
   color: var(--hs-maroon); margin: 0 0 6px;
 }
-.hs-edit-size { margin-bottom: 22px; }
+.hs-edit-size { color: var(--hs-maroon); font-size: 16px; line-height: 1.5; margin-bottom: 22px; }
 .hs-delete-btn {
   position: absolute; bottom: 18px; right: 56px; background: none; border: none;
   padding: 4px; display: flex; align-items: center; justify-content: center;
@@ -150,7 +150,18 @@ html, body {
 #hs-sort-row label { font-size: 15px; font-weight: 700; color: var(--hs-maroon); }
 #hs-sort-select {
   background: transparent; border: none; font-size: 15px; font-weight: 700;
-  color: var(--hs-maroon); padding: 4px 0;
+  color: var(--hs-maroon); padding: 4px 16px 4px 0;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233F1922' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: 16px;
+}
+#hs-search {
+  margin-left: auto;
+  background: var(--hs-cream); border-radius: 18px;
+  padding: 8px 14px; font-size: 14px; color: var(--hs-maroon);
+  width: 140px; max-width: 45%;
 }
 #hs-error {
   font-size: 13px; color: var(--hs-coral); margin: 10px 0 0; display: none;
@@ -222,6 +233,7 @@ html, body {
       <option value="location">Location</option>
       <option value="starred">Favorites</option>
     </select>
+    <input type="text" id="hs-search" placeholder="Search" autocomplete="off" />
   </div>
   <div id="hs-full-list"></div>
 </div>
@@ -232,7 +244,7 @@ html, body {
 <script>
 (function() {
   var STORAGE_KEY = 'entries';
-  var state = { entries: [], rating: 0, screen: 'home', sort: 'date' };
+  var state = { entries: [], rating: 0, screen: 'home', sort: 'date', search: '' };
 
   var REGIONS = [
     { name: 'East Coast', color: '#2B5FE3' },
@@ -485,7 +497,7 @@ html, body {
       var scoreA = a.rating + (a.starred ? 1 : 0);
       var scoreB = b.rating + (b.starred ? 1 : 0);
       return scoreB - scoreA;
-    }).slice(0, 10);
+    }).slice(0, 5);
     el.innerHTML = top.map(function(e) { return cardHtml(e); }).join('');
     bindCardEvents(el);
   }
@@ -496,7 +508,21 @@ html, body {
       el.innerHTML = '<p class="hs-empty">No oysters logged yet.</p>';
       return;
     }
-    var sorted = state.entries.slice();
+    var filtered = state.entries.slice();
+    var q = (state.search || '').trim().toLowerCase();
+    if (q) {
+      filtered = filtered.filter(function(e) {
+        return (e.name || '').toLowerCase().indexOf(q) !== -1 ||
+               (e.origin || '').toLowerCase().indexOf(q) !== -1 ||
+               (e.region || '').toLowerCase().indexOf(q) !== -1 ||
+               (e.notes || '').toLowerCase().indexOf(q) !== -1;
+      });
+    }
+    if (filtered.length === 0) {
+      el.innerHTML = '<p class="hs-empty">No oysters match your search.</p>';
+      return;
+    }
+    var sorted = filtered;
     if (state.sort === 'name') {
       sorted.sort(function(a, b) { return a.name.localeCompare(b.name); });
     } else if (state.sort === 'rating') {
@@ -648,8 +674,20 @@ html, body {
   document.getElementById('hs-fab').addEventListener('click', function() {
     showScreen(state.screen === 'home' ? 'list' : 'home');
   });
+  function sizeSortSelect() {
+    var sel = document.getElementById('hs-sort-select');
+    var selectedText = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '';
+    sizeToText(sel, selectedText, 60, 22);
+  }
+
   document.getElementById('hs-sort-select').addEventListener('change', function(ev) {
     state.sort = ev.target.value;
+    sizeSortSelect();
+    renderFullList();
+  });
+
+  document.getElementById('hs-search').addEventListener('input', function(ev) {
+    state.search = ev.target.value;
     renderFullList();
   });
 
@@ -661,6 +699,7 @@ html, body {
 
   renderRatingPick();
   showScreen('home');
+  sizeSortSelect();
   loadEntries();
 })();
 
