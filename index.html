@@ -97,7 +97,7 @@ html, body {
 .hs-origin-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .hs-origin-row .hs-edit-origin { margin-bottom: 0; flex: 0 1 auto; min-width: 60px; font-size: 14.4px; }
 .hs-region-select {
-  border: none; border-radius: 18px; padding: 8px 16px; font-size: 12.6px;
+  border: none; border-radius: 18px; padding: 6px 16px; font-size: 12.6px;
   font-weight: 600; color: #fff; flex-shrink: 0; appearance: none;
   -webkit-appearance: none; cursor: pointer;
 }
@@ -113,7 +113,7 @@ html, body {
   opacity: 0; pointer-events: none; transition: opacity 0.15s;
 }
 .hs-best-btn {
-  border: none; border-radius: 18px; padding: 8px 16px; font-size: 12.6px;
+  border: none; border-radius: 18px; padding: 6px 16px; font-size: 12.6px;
   font-weight: 600; white-space: nowrap; flex-shrink: 0; margin-left: 12px;
   background: rgba(255,255,255,0.5); color: rgba(63,25,34,0.55);
   opacity: 0; pointer-events: none; transition: opacity 0.15s;
@@ -146,7 +146,12 @@ html, body {
   margin-top: 16px; padding: 11px 28px; border-radius: 24px; border: none;
   background: var(--hs-coral); color: #fff; font-size: 15px; font-weight: 700;
 }
-#hs-sort-row { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
+#hs-sort-row { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; }
+#hs-total-count {
+  font-size: 15px; font-weight: 700; color: #3F1922;
+  margin: 0 -24px 24px; padding: 18px 24px 0;
+  border-top: 1px solid rgba(63,25,34,0.25);
+}
 #hs-sort-row label { font-size: 15px; font-weight: 700; color: var(--hs-maroon); }
 #hs-sort-select {
   background: transparent; border: none; font-size: 15px; font-weight: 700;
@@ -235,6 +240,7 @@ html, body {
     </select>
     <input type="text" id="hs-search" placeholder="Search" autocomplete="off" />
   </div>
+  <p id="hs-total-count"></p>
   <div id="hs-full-list"></div>
 </div>
 
@@ -251,7 +257,8 @@ html, body {
     { name: 'West Coast', color: '#90ADBF' },
     { name: 'British Columbia', color: '#3F1922' },
     { name: 'Maritime Canada', color: '#8B8324' },
-    { name: 'Gulf Coast', color: '#B98AA0' }
+    { name: 'Gulf Coast', color: '#B98AA0' },
+    { name: 'New Zealand', color: '#FF9BCD' }
   ];
 
   function regionColor(name) {
@@ -318,6 +325,25 @@ html, body {
       for (var j = 0; j < entry.keys.length; j++) {
         if (q.indexOf(entry.keys[j]) !== -1) return { origin: entry.origin, notes: entry.notes };
       }
+    }
+    return null;
+  }
+
+  async function dbLookup(name) {
+    var q = name.toLowerCase().trim();
+    try {
+      var res = await fetch(SUPABASE_URL + '/rest/v1/oyster_reference?select=*', {
+        headers: SUPABASE_HEADERS
+      });
+      if (!res.ok) return null;
+      var rows = await res.json();
+      for (var i = 0; i < rows.length; i++) {
+        if (q.indexOf(rows[i].key) !== -1) {
+          return { origin: rows[i].origin, notes: rows[i].notes, size: rows[i].size, region: rows[i].region };
+        }
+      }
+    } catch (e) {
+      console.error('Reference lookup failed', e);
     }
     return null;
   }
@@ -504,6 +530,9 @@ html, body {
 
   function renderFullList() {
     var el = document.getElementById('hs-full-list');
+    var countEl = document.getElementById('hs-total-count');
+    var total = state.entries.length;
+    countEl.textContent = total + ' Oyster' + (total === 1 ? '' : 's') + ' Logged';
     if (state.entries.length === 0) {
       el.innerHTML = '<p class="hs-empty">No oysters logged yet.</p>';
       return;
@@ -633,14 +662,17 @@ html, body {
     btn.disabled = true;
     label.textContent = 'Adding...';
 
-    var match = localLookup(name);
+    var match = await dbLookup(name);
+    if (!match) match = localLookup(name);
     var origin = match ? match.origin : '';
     var notes = match ? match.notes : '';
+    var matchedSize = match ? (match.size || '') : '';
+    var matchedRegion = match ? (match.region || '') : '';
 
     var newEntry = {
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
       name: name, rating: state.rating, origin: origin, notes: notes,
-      region: '', size: '', starred: false, date: new Date().toISOString()
+      region: matchedRegion, size: matchedSize, starred: false, date: new Date().toISOString()
     };
     state.entries.push(newEntry);
 
