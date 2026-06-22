@@ -310,7 +310,7 @@ html, body {
     var bestClass = e.starred ? 'hs-best-btn active' : 'hs-best-btn';
     html += '<div class="hs-name-row">';
     html += '<h3 class="serif">' + escapeHtml(e.name) + '</h3>';
-    html += '<button class="' + bestClass + '" data-id="' + e.id + '">Best in Class</button>';
+    html += '<button class="' + bestClass + '" data-id="' + e.id + '">Favorite</button>';
     html += '</div>';
     html += '<input class="hs-edit-field hs-edit-origin" data-id="' + e.id + '" placeholder="Add origin / region" value="' + escapeHtml(e.origin) + '" />';
     html += pearlRow(e.rating);
@@ -347,7 +347,10 @@ html, body {
           saveEntry(entry);
           var icon = btn.querySelector('.hs-check-icon');
           icon.setAttribute('stroke', '#2E7D32');
-          setTimeout(function() { icon.setAttribute('stroke', 'var(--hs-coral)'); }, 1200);
+          setTimeout(function() {
+            icon.setAttribute('stroke', 'var(--hs-coral)');
+            card.classList.remove('hs-active');
+          }, 1200);
         }
       });
     });
@@ -544,6 +547,7 @@ html, body {
     } else {
       home.style.display = 'none'; list.style.display = '';
       fab.className = 'blue'; fab.innerHTML = 'Add<br>Oyster';
+      list.querySelectorAll('.hs-edit-notes').forEach(function(ta) { autoGrow(ta); });
     }
   }
 
@@ -555,6 +559,12 @@ html, body {
   document.getElementById('hs-sort-select').addEventListener('change', function(ev) {
     state.sort = ev.target.value;
     renderFullList();
+  });
+
+  document.addEventListener('click', function(ev) {
+    document.querySelectorAll('.hs-card.hs-active').forEach(function(card) {
+      if (!card.contains(ev.target)) card.classList.remove('hs-active');
+    });
   });
 
   renderRatingPick();
