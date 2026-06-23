@@ -250,6 +250,7 @@ html, body {
       <option value="rating">Rating</option>
       <option value="location">Location</option>
       <option value="starred">Favorites</option>
+      <option value="ratedBy">Rated by</option>
     </select>
     <input type="text" id="hs-search" placeholder="Search" autocomplete="off" />
   </div>
@@ -588,6 +589,8 @@ html, body {
       sorted.sort(function(a, b) { return (a.region || '').localeCompare(b.region || ''); });
     } else if (state.sort === 'starred') {
       sorted.sort(function(a, b) { return (b.starred ? 1 : 0) - (a.starred ? 1 : 0); });
+    } else if (state.sort === 'ratedBy') {
+      sorted.sort(function(a, b) { return (a.ratedBy || '').localeCompare(b.ratedBy || ''); });
     } else {
       sorted.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
     }
