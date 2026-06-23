@@ -79,9 +79,9 @@ html, body {
   background: var(--hs-cream); border-radius: 18px; padding: 20px;
   margin-bottom: 18px; position: relative;
 }
-.hs-card h3 { font-size: 28px; font-weight: 400; margin: 0; line-height: 1.1; color: var(--hs-maroon); }
+.hs-card h3 { font-size: 25.2px; font-weight: 400; margin: 0; line-height: 1.1; color: var(--hs-maroon); }
 .hs-card .hs-loc { font-size: 16px; color: rgba(63,25,34,0.75); margin: 0 0 22px; }
-.hs-pearl-row { display: flex; gap: 8px; margin-bottom: 28px; }
+.hs-pearl-row { display: flex; gap: 8px; margin-bottom: 6px; }
 .hs-pearl-row span {
   box-sizing: border-box;
   width: 22px; height: 22px; border-radius: 50%; display: inline-block;
@@ -93,27 +93,37 @@ html, body {
   width: 100%; background: transparent; padding: 0; margin: 0 0 22px;
   color: rgba(63,25,34,0.75); font-size: 16px;
 }
-.hs-edit-notes { color: var(--hs-maroon); font-size: 16px; line-height: 1.5; resize: none; min-height: 24px; margin: 0; }
+.hs-edit-notes { color: var(--hs-maroon); font-size: 14.4px; line-height: 1.5; resize: none; min-height: 24px; margin: 0; }
 .hs-origin-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-.hs-origin-row .hs-edit-origin { margin-bottom: 0; flex: 0 1 auto; min-width: 60px; font-size: 16px; color: var(--hs-maroon); line-height: 1.5; }
+.hs-origin-row .hs-edit-origin { margin-bottom: 0; flex: 0 1 auto; min-width: 60px; font-size: 14.4px; color: var(--hs-maroon); line-height: 1.5; }
 .hs-region-select {
-  border: none; border-radius: 18px; padding: 6px 16px; font-size: 12.6px;
+  border: none; border-radius: 18px; padding: 5.4px 16px; font-size: 11.34px;
   font-weight: 600; color: #fff; flex-shrink: 0; appearance: none;
   -webkit-appearance: none; cursor: pointer;
 }
 .hs-region-select option { color: #000; }
 .hs-field-label {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  font-size: 9.9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
   color: var(--hs-maroon); margin: 0 0 6px;
 }
-.hs-edit-size { color: var(--hs-maroon); font-size: 16px; line-height: 1.5; margin-bottom: 22px; }
+.hs-edit-size { color: var(--hs-maroon); font-size: 14.4px; line-height: 1.5; margin-bottom: 22px; }
+.hs-rated-by-row { margin: 0 0 22px; }
+.hs-rated-by-prefix {
+  font-size: 9.9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  color: #A8786C;
+}
+.hs-rated-by-input {
+  font-size: 9.9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  color: #A8786C; background: transparent; border: none; padding: 0;
+  width: auto; min-width: 60px;
+}
 .hs-delete-btn {
   position: absolute; bottom: 18px; right: 56px; background: none; border: none;
   padding: 4px; display: flex; align-items: center; justify-content: center;
   opacity: 0; pointer-events: none; transition: opacity 0.15s;
 }
 .hs-best-btn {
-  border: none; border-radius: 18px; padding: 6px 16px; font-size: 12.6px;
+  border: none; border-radius: 18px; padding: 5.4px 16px; font-size: 11.34px;
   font-weight: 600; white-space: nowrap; flex-shrink: 0; margin-left: 12px;
   background: rgba(255,255,255,0.5); color: rgba(63,25,34,0.55);
   opacity: 0; pointer-events: none; transition: opacity 0.15s;
@@ -211,10 +221,13 @@ html, body {
 <div id="hs-app-content" class="hs-locked">
 
 <div id="hs-screen-home">
-  <p class="hs-section-label">Add an oyster</p>
+  <p class="hs-section-label">Add Oyster</p>
   <input class="hs-input" type="text" id="hs-name" placeholder="e.g. Kumamoto, Wellfleet, Fanny Bay" />
 
-  <p class="hs-section-label" style="margin-top:20px;">Give it a pearl rating</p>
+  <p class="hs-section-label" style="margin-top:20px;">Name</p>
+  <input class="hs-input" type="text" id="hs-rater-name" placeholder="Who's rating this one?" />
+
+  <p class="hs-section-label" style="margin-top:20px;">Pearl Rating</p>
   <div class="hs-pearl-pick" id="hs-rating-pick"></div>
 
   <button id="hs-add-btn">
@@ -405,6 +418,7 @@ html, body {
     html += '<select class="hs-region-select" data-id="' + e.id + '" style="background:' + regionColor(e.region) + ';color:' + regionTextColor(e.region) + ';">' + regionOptionsHtml(e.region) + '</select>';
     html += '</div>';
     html += pearlRow(e.rating);
+    html += '<div class="hs-rated-by-row"><span class="hs-rated-by-prefix">Rated by</span> <input class="hs-rated-by-input" data-id="' + e.id + '" placeholder="Name" value="' + escapeHtml(e.ratedBy || '') + '" /></div>';
     html += '<p class="hs-field-label">Size</p>';
     html += '<input class="hs-edit-field hs-edit-size" data-id="' + e.id + '" placeholder="Add size" value="' + escapeHtml(e.size || '') + '" />';
     html += '<p class="hs-field-label">Flavor profile</p>';
@@ -489,6 +503,14 @@ html, body {
       input.addEventListener('change', function() {
         var entry = state.entries.find(function(e) { return e.id === input.getAttribute('data-id'); });
         if (entry) { entry.origin = input.value.trim(); saveEntry(entry); renderAll(); }
+      });
+    });
+    container.querySelectorAll('.hs-rated-by-input').forEach(function(input) {
+      sizeToText(input, input.value || input.placeholder, 50, 10);
+      input.addEventListener('input', function() { sizeToText(input, input.value, 50, 10); });
+      input.addEventListener('change', function() {
+        var entry = state.entries.find(function(e) { return e.id === input.getAttribute('data-id'); });
+        if (entry) { entry.ratedBy = input.value.trim(); saveEntry(entry); }
       });
     });
     container.querySelectorAll('.hs-region-select').forEach(function(sel) {
@@ -592,6 +614,7 @@ html, body {
       id: row.id, name: row.name, rating: row.rating,
       origin: row.origin || '', notes: row.notes || '',
       region: row.region || '', size: row.size || '',
+      ratedBy: row.rated_by || '',
       starred: !!row.starred, date: row.date
     };
   }
@@ -621,6 +644,7 @@ html, body {
           id: entry.id, name: entry.name, rating: entry.rating,
           origin: entry.origin || '', notes: entry.notes || '',
           region: entry.region || '', size: entry.size || '',
+          rated_by: entry.ratedBy || '',
           starred: !!entry.starred, date: entry.date
         }])
       });
@@ -661,6 +685,8 @@ html, body {
     var name = nameInput.value.trim();
     setError('');
     if (!name) { setError('Enter an oyster name.'); return; }
+    var raterNameCheck = document.getElementById('hs-rater-name').value.trim();
+    if (!raterNameCheck) { setError('Enter your name.'); return; }
     if (!state.rating) { setError('Pick a pearl rating from 1 to 5.'); return; }
 
     var btn = document.getElementById('hs-add-btn');
@@ -675,10 +701,11 @@ html, body {
     var matchedSize = match ? (match.size || '') : '';
     var matchedRegion = match ? (match.region || '') : '';
 
+    var raterName = document.getElementById('hs-rater-name').value.trim();
     var newEntry = {
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
       name: name, rating: state.rating, origin: origin, notes: notes,
-      region: matchedRegion, size: matchedSize, starred: false, date: new Date().toISOString()
+      region: matchedRegion, size: matchedSize, ratedBy: raterName, starred: false, date: new Date().toISOString()
     };
     state.entries.push(newEntry);
 
@@ -686,6 +713,7 @@ html, body {
     renderAll();
 
     nameInput.value = '';
+    document.getElementById('hs-rater-name').value = '';
     state.rating = 0;
     renderRatingPick();
     btn.disabled = false;
